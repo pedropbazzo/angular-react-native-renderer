@@ -1,0 +1,45 @@
+extends _layout
+
+block content
+    div(style="float: right;")
+        a(href='https://github.com/angular/react-native-renderer/blob/master/doc/pages/bootstrap.jade') Edit this page on Github
+
+    :marked
+        # bootstrap
+
+        ## JIT compilation
+
+        To bootstrap an application with JIT compilation, you must use the special methods `bootstrapReactNativeJIT`.
+
+        ```
+        import {bootstrapReactNativeJIT} from 'angular-react-native/jit';
+        import {MyAppModule} from "./app/module";
+
+        bootstrapReactNativeJIT('myApp', MyAppModule);
+        ```
+
+        ## AOT compilation
+
+        To bootstrap an application with AOT compilation, you must use the special methods `bootstrapReactNativeAOT`.
+
+        ```
+        import {bootstrapReactNativeAOT} from 'angular-react-native/aot';
+        import {MyAppModuleNgFactory} from "./app/module.ngfactory";
+
+        bootstrapReactNativeAOT('myApp', MyAppModule);
+        ```
+
+        ## Main module
+
+        The main module must import `ReactNativeAndroidModule` or `ReactNativeiOSModule` depending on the platform targetted:
+         ```
+         @NgModule({
+           declarations: [...],
+           imports: [ReactNativeAndroidModule, CommonModule],
+           bootstrap: [...]
+         })
+         export class MyAppModule {}
+
+         ```
+
+        In order to use the [Http](./http.html) and [Router](./router.html) features, extra modules need to be imported in the main module.

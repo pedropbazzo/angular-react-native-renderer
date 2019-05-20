@@ -1,0 +1,61 @@
+extends _layout
+
+block content
+    div(style="float: right;")
+        a(href='https://github.com/angular/react-native-renderer/blob/master/doc/pages/http.jade') Edit this page on Github
+
+    :marked
+        # Http
+
+        The http module of Angular can be used as is in applications.
+        The only thing to be done is to import `ReactNativeHttpModule` in the main module of the application (see below).
+
+        Behind the scene, it uses the [Network polyfill](https://facebook.github.io/react-native/docs/network.html) provided by React Native.
+
+        ## Main module
+        ```
+        @NgModule({
+          declarations: [...],
+          imports: [ReactNativeAndroidModule, CommonModule, ReactNativeHttpModule],
+          bootstrap: [...]
+        })
+        export class MyAppModule {}
+        ```
+
+        ## Example
+        ```
+        import {Component, ViewChild} from '@angular/core';
+        import {NgFor} from '@angular/common';
+        import {Http} from '@angular/http';
+        import 'rxjs/add/operator/map';
+        import {TextInput} from 'angular-react-native';
+
+        @Component({
+          selector: 'example',
+          template: `
+        <TextInput placeholder="Search Wikipedia" (submit)="sendXHR($event)"></TextInput>
+        <Text *ngFor="let page of pages">{{page}}</Text>
+        `
+        })
+        export class Example {
+          @ViewChild(TextInput) textInput: TextInput;
+          pages: Array<any> = [];
+          constructor(private http: Http) {}
+
+          sendXHR(text: string) {
+            if (text && text.length > 0) {
+              this.http.get('https://en.wikipedia.org/w/api.php?format=json&action=query&generator=allpages&gaplimit=10&gapfrom=' + text)
+                .map(res => res.json())
+                .subscribe(data => {
+                  this.pages = [];
+                  var raw = data['query'].pages;
+                  for (var key in raw) {
+                    this.pages.push(raw[key].title);
+                  }
+                });
+              this.textInput.blurTextInput();
+            }
+          }
+
+        }
+        ```

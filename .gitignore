@@ -1,0 +1,8 @@
+node_modules
+dist
+typings
+*.log
+.idea
+.DS_Store
+*.ngfactory.ts
+es6

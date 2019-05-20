@@ -1,0 +1,69 @@
+extends _layout
+
+block content
+    div(style="float: right;")
+        a(href='https://github.com/angular/react-native-renderer/blob/master/doc/pages/router.jade') Edit this page on Github
+
+    :marked
+        # Router
+
+        The rooter module of Angular can be used as is in applications.
+        The only thing to be done is to import `ReactNativeRouterModule` in the main module of the application (see below),
+        and use the static `RouterModule.forRoot` method to configure routes.
+
+        It uses a mock of `LocationStrategy`. Manipulating the location triggers a navigation of the router.
+
+        ## Main module
+        ```
+        const appRoutes: Routes = [
+          { path: '', component: CompA },
+          { path: 'b', component: CompB }
+        ];
+
+        export const providers: Provider[] = RouterModule.forRoot(appRoutes)['providers'];
+
+        @NgModule({
+          declarations: [Example, CompA, CompB, ...],
+          imports: [ReactNativeAndroidModule, CommonModule, ReactNativeRouterModule],
+          providers: [providers, {provide: LocationStrategy, useClass: ReactNativeLocationStrategy}],
+          bootstrap: [Example]
+        })
+        export class MyAppModule {}
+        ```
+
+        ## Directives
+        - The standard `RouterOutlet` can be used.
+        - A custom `RouterLink` must be used, it can respond to any gesture with the `event` property (default is `tap`).
+
+        ## Example
+        ```
+        import {Component} from '@angular/core';
+        import {LocationStrategy} from '@angular/common';
+
+        @Component({
+          selector: 'comp-a',
+          template: `<Text [routerLink]="['/CompB']" event="doubletap">Hello A</Text>`
+        })
+        class CompA {}
+
+        @Component({
+          selector: 'comp-b',
+          template: `<Text (tap)="_goBack()"> Hello B</Text>`
+        })
+        class CompB {
+          constructor(private _locationStrategy: LocationStrategy) {}
+          _goBack() {
+            this._locationStrategy.back();
+          }
+        }
+
+        @Component({
+          selector: 'example',
+          template: `
+        <View [style]="{margin: 50}">
+          <router-outlet></router-outlet>
+        </View>
+          `
+        })
+        export class Example {}
+        ```
